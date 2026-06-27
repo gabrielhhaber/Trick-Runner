@@ -72,14 +72,23 @@ class GameState:
     # Spatial audio update
     # ------------------------------------------------------------------
 
-    _VOL_MIN = 0.15   # volume at the edge of hearing range
+    _VOL_MIN = 0.05   # volume at the edge of hearing range (barely audible)
     _VOL_MAX = 1.00   # volume when player is right at the obstacle
 
     def _spatial(self, distance: int) -> tuple[float, float]:
-        """Return (pan, volume) for a given signed distance to an obstacle."""
-        ratio = abs(distance) / HEARING_RANGE          # 0.0 (closest) → 1.0 (edge)
-        pan = max(-1.0, min(1.0, distance / HEARING_RANGE))
-        volume = self._VOL_MAX - (self._VOL_MAX - self._VOL_MIN) * ratio
+        """Return (pan, volume) for a given signed distance to an obstacle.
+
+        Volume uses a quadratic falloff so distant obstacles drop off quickly
+        while close ones rise sharply — much more contrast than a linear curve:
+
+          proximity 1.0 (at obstacle) → volume 1.00
+          proximity 0.5 (mid-range)   → volume ~0.29
+          proximity 0.0 (edge)        → volume 0.05
+        """
+        ratio     = abs(distance) / HEARING_RANGE       # 0.0 (at obs) → 1.0 (edge)
+        proximity = 1.0 - ratio                          # 1.0 → 0.0
+        pan    = max(-1.0, min(1.0, distance / HEARING_RANGE))
+        volume = self._VOL_MIN + (self._VOL_MAX - self._VOL_MIN) * proximity ** 2
         return pan, volume
 
     def _update_obstacle_sounds(self) -> None:
@@ -143,7 +152,8 @@ class GameState:
 
     def _do_step(self) -> None:
         self.player.step()
-        play_oneshot("step.ogg")
+        if not self.player.is_jumping:
+            play_oneshot("step.ogg")
 
         # Collision check before updating spatial audio
         for obs in self.obstacles:
