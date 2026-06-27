@@ -34,7 +34,7 @@ from level import generate_level
 from obstacle import Obstacle
 from constants import HEARING_RANGE, PAN_RANGE, TOTAL_LEVELS
 from audio import play_sound, play_oneshot, free_stream
-from speech import speak
+from speech import speak, is_speaking
 
 
 class GameState:
@@ -202,7 +202,9 @@ class GameState:
             speak(f"Nível completo! Preparando nível {self._current_level + 1}: último nível!")
         else:
             speak(f"Nível completo! Preparando nível {self._current_level + 1}.")
-        pygame.time.wait(1800)
+        while is_speaking():
+            pygame.time.wait(50)
+        pygame.time.wait(600)
         self._load_level()
         return None
 
