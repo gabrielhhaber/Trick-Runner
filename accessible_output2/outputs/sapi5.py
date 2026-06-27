@@ -3,6 +3,9 @@ from collections import OrderedDict
 from libloader.com import load_com
 from .base import Output, OutputError
 import pywintypes
+import logging
+
+log = logging.getLogger(__name__)
 
 SVSFDefault = 0
 SVSFlagsAsync = 1
@@ -14,6 +17,8 @@ SVSFPersistXML = 32
 
 
 class SAPI5(Output):
+    """Supports the microsoft speech API version 5."""
+
     has_volume = True
     has_rate = True
     has_pitch = True
@@ -31,7 +36,7 @@ class SAPI5(Output):
         try:
             self.object = load_com("SAPI.SPVoice")
             self._voices = self._available_voices()
-        except pywintypes.com_error:
+        except (pywintypes.com_error, TypeError):
             raise OutputError
         self._pitch = 0
 
@@ -48,6 +53,7 @@ class SAPI5(Output):
         return self.object.Voice.GetDescription()
 
     def set_voice(self, value):
+        log.debug('Setting SAPI5 voice to "%s"' % value)
         self.object.Voice = self._voices[value]
         # For some reason SAPI5 does not reset audio after changing the voice
         # By setting the audio device after changing voices seems to fix this
@@ -59,12 +65,14 @@ class SAPI5(Output):
         return self._pitch
 
     def set_pitch(self, value):
+        log.debug("Setting pitch to %d" % value)
         self._pitch = value
 
     def get_rate(self):
         return self.object.Rate
 
     def set_rate(self, value):
+        log.debug("Setting rate to %d" % value)
         self.object.Rate = value
 
     def get_volume(self):
@@ -77,8 +85,10 @@ class SAPI5(Output):
         if interrupt:
             self.silence()
         # We need to do the pitch in XML here
-        textOutput = "<pitch absmiddle=\"%d\">%s</pitch>" % (
-            round(self._pitch), text.replace("<", "&lt;"))
+        textOutput = '<pitch absmiddle="%d">%s</pitch>' % (
+            round(self._pitch),
+            text.replace("<", "&lt;"),
+        )
         self.object.Speak(textOutput, SVSFlagsAsync | SVSFIsXML)
 
     def silence(self):

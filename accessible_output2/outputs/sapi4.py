@@ -4,12 +4,14 @@ from libloader.com import load_com
 from .base import Output
 
 import logging
+
 log = logging.getLogger(__name__)
 
 
 class Sapi4(Output):
+    """Supports the microsoft speech API version 4."""
 
-    name = 'sapi4'
+    name = "sapi4"
     priority = 102
 
     def __init__(self):
@@ -27,7 +29,7 @@ class Sapi4(Output):
             self._min_pitch = sapi4.MinPitch
             self._max_pitch = sapi4.MaxPitch
             self._has_pitch = True
-        except BaseException:
+        except:
             self._min_pitch = 0
             self._max_pitch = 0
             self._has_pitch = False
@@ -36,7 +38,7 @@ class Sapi4(Output):
             self._min_rate = sapi4.MinSpeed
             self._max_rate = sapi4.MaxSpeed
             self._has_rate = True
-        except BaseException:
+        except:
             self._min_rate = 0
             self._max_rate = 0
             self._has_rate = False
@@ -45,7 +47,7 @@ class Sapi4(Output):
             self._min_volume = sapi4.MinVolumeLeft
             self._max_volume = sapi4.MaxVolumeLeft
             self._has_volume = True
-        except BaseException:
+        except:
             self._min_volume = 0
             self._max_volume = 0
             self._has_volume = False

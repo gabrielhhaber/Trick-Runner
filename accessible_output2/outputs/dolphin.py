@@ -5,14 +5,14 @@ import ctypes
 from .base import Output
 
 
-class Dolphin (Output):
+class Dolphin(Output):
     """Supports dolphin products."""
 
-    name = 'Dolphin'
-    lib32 = 'dolapi.dll'
+    name = "Dolphin"
+    lib32 = "dolapi.dll"
     argtypes = {
-        'DolAccess_Command': (ctypes.c_wchar_p, ctypes.c_int, ctypes.c_int),
-        'DolAccess_Action': (ctypes.c_int,),
+        "DolAccess_Command": (ctypes.c_wchar_p, ctypes.c_int, ctypes.c_int),
+        "DolAccess_Action": (ctypes.c_int,),
     }
 
     def speak(self, text, interrupt=0):
@@ -28,7 +28,7 @@ class Dolphin (Output):
     def is_active(self):
         try:
             return self.lib.DolAccess_GetSystem() in (1, 4, 8)
-        except BaseException:
+        except:
             return False
 
 

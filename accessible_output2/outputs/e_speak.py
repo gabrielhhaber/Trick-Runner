@@ -1,34 +1,35 @@
 from __future__ import absolute_import
 from .base import Output
 
-try:
-    import espeak.core
-except BaseException:
-    raise RuntimeError("Cannot find espeak.core. Please install python-espeak")
-
-
 class ESpeak(Output):
-    """Speech output supporting ESpeak on Linux
-                            Note this requires python-espeak to be installed
-                            This can be done on Debian distros by using apt-get install python-espeak
-                            Or through this tarball: https://launchpad.net/python-espeak
-    """
-    name = "Linux ESpeak"
+    """Supports ESpeak on Linux
 
-    def is_active(self):
+    Note this requires python-espeak to be installed
+    This can be done on Debian distros by using apt-get install python-espeak
+    Or through `this tarball <https://launchpad.net/python-espeak>`_.
+	"""
+
+    name = "Linux ESpeak"
+    priority = 101
+    _ec = None
+
+    def __init__(self):
         try:
             import espeak.core
-        except BaseException:
-            return False
-        return True
+            self._ec = espeak.core
+        except:
+            print("Cannot find espeak.core. Please install python-espeak or python3-espeak.")
+
+    def is_active(self):
+        return self._ec is not None
 
     def speak(self, text, interrupt=0):
         if interrupt:
             self.silence()
-        espeak.core.synth(text)
+        self._ec.synth(text)
 
     def silence(self):
-        espeak.core.cancel()
+        self._ec.cancel()
 
 
 output_class = ESpeak

@@ -10,18 +10,19 @@ from .base import Output
 
 class NVDA(Output):
     """Supports The NVDA screen reader"""
+
     name = "NVDA"
-    lib32 = 'nvdaControllerClient32.dll'
-    lib64 = 'nvdaControllerClient64.dll'
+    lib32 = "nvdaControllerClient32.dll"
+    lib64 = "nvdaControllerClient64.dll"
     argtypes = {
-        'nvdaController_brailleMessage': (ctypes.c_wchar_p,),
-        'nvdaController_speakText': (ctypes.c_wchar_p,),
+        "nvdaController_brailleMessage": (ctypes.c_wchar_p,),
+        "nvdaController_speakText": (ctypes.c_wchar_p,),
     }
 
     def is_active(self):
         try:
             return self.lib.nvdaController_testIfRunning() == 0
-        except BaseException:
+        except:
             return False
 
     def braille(self, text, **options):

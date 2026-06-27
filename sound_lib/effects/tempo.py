@@ -5,20 +5,20 @@ from ..stream import BaseStream
 from ..channel import Channel
 from ..main import bass_call, bass_call_0
 
-
 class Tempo(BaseStream):
-
+    """ """
     def __init__(
-            self,
-            channel,
-            flags=0,
-            loop=False,
-            software=False,
-            three_d=False,
-            sample_fx=False,
-            autofree=False,
-            decode=False,
-            free_source=False):
+        self,
+        channel,
+        flags=0,
+        loop=False,
+        software=False,
+        three_d=False,
+        sample_fx=False,
+        autofree=False,
+        decode=False,
+        free_source=False,
+    ):
         flags = flags | self.flags_for(
             loop=False,
             software=False,
@@ -26,7 +26,8 @@ class Tempo(BaseStream):
             sample_fx=False,
             autofree=False,
             decode=False,
-            free_source=False)
+            free_source=False,
+        )
         self.channel = channel
         if isinstance(channel, Channel):
             channel = channel.handle
@@ -45,31 +46,57 @@ class Tempo(BaseStream):
 
     @tempo.setter
     def tempo(self, val):
-        self.set_attribute('tempo', val)
+        """
+
+        Args:
+          val: 
+
+        Returns:
+
+        """
+        self.set_attribute("tempo", val)
 
     @property
     def tempo_pitch(self):
-        return self.get_attribute('tempo_pitch')
+        """ """
+        return self.get_attribute("tempo_pitch")
 
     @tempo_pitch.setter
     def tempo_pitch(self, val):
-        self.set_attribute('tempo_pitch', val)
+        """
+
+        Args:
+          val: 
+
+        Returns:
+
+        """
+        self.set_attribute("tempo_pitch", val)
 
     @property
     def tempo_freq(self):
-        return self.get_attribute('tempo_freq')
+        """ """
+        return self.get_attribute("tempo_freq")
 
     @tempo_freq.setter
     def tempo_freq(self, val):
-        self.set_attribute('tempo_freq', val)
+        """
+
+        Args:
+          val: 
+
+        Returns:
+
+        """
+        self.set_attribute("tempo_freq", val)
 
     def setup_flag_mapping(self):
+        """ """
         super(Tempo, self).setup_flag_mapping()
-        self.flag_mapping.update({
-            'free_source': pybass_fx.BASS_FX_FREESOURCE,
-        })
+        self.flag_mapping.update({"free_source": pybass_fx.BASS_FX_FREESOURCE})
 
     def get_source(self):
+        """ """
         source = pybass_fx.BASS_FX_TempoGetSource(self.handle)
         if source == self.channel.handle:
             source = self.channel
@@ -78,6 +105,7 @@ class Tempo(BaseStream):
     source = property(fget=get_source)
 
     def get_rate_ratio(self):
+        """ """
         return bass_call(pybass_fx.BASS_FX_TempoGetRateRatio, self.handle)
 
     rate_ratio = property(fget=get_rate_ratio)
