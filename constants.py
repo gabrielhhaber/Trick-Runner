@@ -1,7 +1,11 @@
 import os
+import sys
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-SOUNDS_DIR = os.path.join(BASE_DIR, "sounds")
+if getattr(sys, "frozen", False):
+    # PyInstaller onefile: sounds live in lib/sounds/ next to the exe.
+    SOUNDS_DIR = os.path.join(os.path.dirname(sys.executable), "sounds")
+else:
+    SOUNDS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sounds")
 
 SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 120
@@ -9,7 +13,8 @@ FPS = 60
 
 TOTAL_LEVELS = 6
 HEARING_RANGE = 15   # steps in each direction where obstacle sound is audible
-JUMP_DURATION = 3    # how many steps the player stays airborne after jumping
+PAN_RANGE     = 6    # steps over which pan sweeps from centre (0) to full side (±1)
+JUMP_DURATION = 5    # how many steps the player stays airborne after jumping
 MIN_OBSTACLE_GAP = 8 # minimum steps between two consecutive obstacles
 
 # Per-level config: speed increases, map grows, obstacle count rises.

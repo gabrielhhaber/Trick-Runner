@@ -20,15 +20,17 @@ class Player:
     # ------------------------------------------------------------------
 
     def jump(self) -> bool:
-        """Initiate a jump. Returns True if the jump was accepted."""
-        if self.is_jumping:
+        """Initiate a jump. Returns True if the jump was accepted.
+        Blocked while crouching or already airborne."""
+        if self.is_jumping or self.is_crouching:
             return False
         self._jump_steps = JUMP_DURATION
         return True
 
     def start_crouch(self) -> bool:
-        """Start crouching. Returns True on state change."""
-        if self.is_crouching:
+        """Start crouching. Returns True on state change.
+        Blocked while airborne."""
+        if self.is_crouching or self.is_jumping:
             return False
         self.is_crouching = True
         return True

@@ -16,7 +16,13 @@ class Obstacle:
 
     @property
     def sound_file(self) -> str:
+        """Ambient looping warning sound (spatialized during approach)."""
         return "pit.ogg" if self.type == ObstacleType.PIT else "boulder.ogg"
+
+    @property
+    def death_sound_file(self) -> str:
+        """One-shot sound played on collision/death."""
+        return "falling_pit.ogg" if self.type == ObstacleType.PIT else "boulder_hit.ogg"
 
     def check_collision(self, player) -> bool:
         """

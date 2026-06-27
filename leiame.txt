@@ -1,0 +1,21 @@
+Trick Runner, manual básico do jogo
+
+Autor: Gabriel Haberkamp.
+
+O que é?
+Seja bem-vindo ao jogo Trick Runner! Neste jogo puramente baseado em áudio, seu objetivo é completar todos os seis níveis desviando dos obstáculos em seu caminho, enquanto corre descontroladamente e em alta velocidade. Você desvia dos poços pressionando a seta para cima para pular, e desvia dos pedregulhos abaixando-se mantendo a seta para baixo pressionada.
+
+Como jogar?
+Ao abrir o arquivo executável do jogo chamado trick runner.exe, você será direcionado ao menu principal contendo apenas duas opções. Iniciar jogo e sair. Você pode navegar no menu usando as setas para cima e para baixo para selecionar uma opção e pressionando Enter para ativar.
+O próprio jogo já lista as teclas que devem ser utilizadas, que são:
+Seta para cima: pressionar uma vez para dar um salto longo.
+Seta para baixo: mantenha pressionada para abaixar-se.
+C: ver suas coordenadas atuais.
+Esc: cancelar jogo.
+
+Você deve identificar os obstáculos prestando atenção no som que fazem enquanto você se aproxima deles. Os poços fazem um som de vento e água, semelhante ao de uma caverna, enquanto os pedregulhos fazem um som de algo rolando constantemente. Quando eles estiverem se aproximando do centro, significa que você precisa desviar deles o mais rápido possível, seja abaixando-se mantendo a seta para baixo pressionada até o pedregulho passar, ou pulando quando sentir que um poço está logo à sua frente. Na terminologia dos audiogames em 2d, direita significa que o objeto está à frente e esquerda significa que está atrás.
+Como este é um jogo baseado totalmente em áudio, você não pode usar gráficos na tela para se orientar e terá que depender unicamente do som. Para identificar com precisão quando algum obstáculo está mais à direita, mais ao centro ou mais à esquerda, recomenda-se fortemente o uso de fones de ouvido com fio ou sem delay (2,4ghz não bluetooth).
+Seu objetivo final é completar com sucesso todos os seis níveis do jogo, conquistando então a vitória suprema. Em cada nível, o jogo anunciará que você avançou e os passos do jogador ficarão mais rápidos, enquanto a quantidade de obstáculos presentes no mapa aumenta.
+Se você morrer, ouvirá o som do personagem caindo no poço ou de um pedregulho se chocando contra você. Então, será redirecionado de volta ao menu principal.
+
+Boa sorte e aproveite bem o jogo Trick Runner!

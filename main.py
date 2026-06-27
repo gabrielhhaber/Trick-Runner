@@ -33,6 +33,8 @@ def main() -> None:
                 _quit()
 
         result = state.handle_events(events)
+        if result is None:
+            result = state.update()
 
         if result == "quit":
             _quit()
@@ -40,8 +42,7 @@ def main() -> None:
             state = GameState()
         elif result == "menu":
             state = Menu()
-
-        state.update()
+            continue
         state.draw(screen)
         pygame.display.flip()
         clock.tick(60)

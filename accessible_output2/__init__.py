@@ -1,23 +1,19 @@
 from __future__ import absolute_import
 import ctypes
 import os
+import sys
 import types
 from platform_utils import paths
 
 
 def load_library(libname, cdll=False):
     if paths.is_frozen():
-        libfile = os.path.join(
-            paths.embedded_data_path(), "accessible_output2", "lib", libname
-        )
+        # When frozen by PyInstaller, DLLs live in lib/accessible_output2/lib/
+        # next to the exe, not in sys._MEIPASS.
+        _exe_dir = os.path.dirname(sys.executable)
+        libfile = os.path.join(_exe_dir, "lib", "accessible_output2", "lib", libname)
     else:
         libfile = os.path.join(paths.module_path(), "lib", libname)
-    if not os.path.exists(libfile):
-        _cxfreeze_libfile = os.path.join(
-            paths.embedded_data_path(), "lib", "accessible_output2", "lib", libname
-        )
-        if os.path.exists(_cxfreeze_libfile):
-            libfile = _cxfreeze_libfile
     if cdll:
         return ctypes.cdll[libfile]
     return ctypes.windll[libfile]
