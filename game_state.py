@@ -6,17 +6,17 @@ one position, plays a footstep sound, and checks for obstacle collisions.
 
 Spatial audio
 -------------
-Each obstacle within HEARING_RANGE steps emits a looping sound whose stereo
-pan is computed as:
+Each obstacle within HEARING_RANGE steps emits a looping sound with:
 
-    pan = clamp((obstacle_pos - player_pos) / HEARING_RANGE, -1.0, 1.0)
+    pan    = clamp((obstacle_pos - player_pos) / HEARING_RANGE, -1.0, 1.0)
+    volume = VOL_MAX - (VOL_MAX - VOL_MIN) * abs(distance) / HEARING_RANGE
 
-  > 0  →  right channel  (obstacle is ahead)
-  = 0  →  centre         (player is at the obstacle)
-  < 0  →  left channel   (obstacle is behind / already passed)
+  pan  > 0  →  right channel  (obstacle is ahead)
+  pan  = 0  →  centre         (at the obstacle)
+  pan  < 0  →  left channel   (obstacle is behind / passed)
+  volume    →  rises linearly from VOL_MIN (edge of range) to VOL_MAX (at obstacle)
 
-The pan is updated after every step so the player always knows where each
-hazard is.
+Both values are updated after every step.
 
 Controls
 --------
@@ -72,19 +72,30 @@ class GameState:
     # Spatial audio update
     # ------------------------------------------------------------------
 
+    _VOL_MIN = 0.15   # volume at the edge of hearing range
+    _VOL_MAX = 1.00   # volume when player is right at the obstacle
+
+    def _spatial(self, distance: int) -> tuple[float, float]:
+        """Return (pan, volume) for a given signed distance to an obstacle."""
+        ratio = abs(distance) / HEARING_RANGE          # 0.0 (closest) → 1.0 (edge)
+        pan = max(-1.0, min(1.0, distance / HEARING_RANGE))
+        volume = self._VOL_MAX - (self._VOL_MAX - self._VOL_MIN) * ratio
+        return pan, volume
+
     def _update_obstacle_sounds(self) -> None:
-        """Refresh pan values; start or stop streams as obstacles enter/leave range."""
+        """Refresh pan + volume; start or stop streams as obstacles enter/leave range."""
         for obs in self.obstacles:
             distance = obs.position - self.player.position  # + = ahead, − = behind
             if abs(distance) <= HEARING_RANGE:
-                pan = max(-1.0, min(1.0, distance / HEARING_RANGE))
+                pan, volume = self._spatial(distance)
                 if obs.sound_stream is None:
                     obs.sound_stream = play_sound(
-                        obs.sound_file, pan=pan, volume=0.75, loop=True
+                        obs.sound_file, pan=pan, volume=volume, loop=True
                     )
                 else:
                     try:
                         obs.sound_stream.pan = pan
+                        obs.sound_stream.volume = volume
                     except Exception:
                         pass
             else:

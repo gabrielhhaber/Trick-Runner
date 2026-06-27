@@ -44,6 +44,14 @@ class Menu:
         speak(_OPTIONS[self._selected]["spoken"])
         play_oneshot("menu_nav.ogg")
 
+    def _announce_intro(self) -> None:
+        speak(
+            "Menu principal. "
+            "Selecione uma opção com as setas e tecle Enter para ativar. "
+            + _OPTIONS[self._selected]["spoken"]
+        )
+        play_oneshot("menu_nav.ogg")
+
     # ------------------------------------------------------------------
     # State interface (same contract as GameState)
     # ------------------------------------------------------------------
@@ -51,7 +59,7 @@ class Menu:
     def update(self) -> None:
         if self._first_update:
             self._first_update = False
-            self._announce()
+            self._announce_intro()
 
     def handle_events(self, events: list) -> str | None:
         for event in events:
