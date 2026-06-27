@@ -3,7 +3,7 @@ Trick Runner — entry point.
 
 State machine:
   menu  →  (start_game)  →  game
-  game  →  (ESC / death) →  menu / exit
+  game  →  (ESC / death) →  menu
 """
 import sys
 import pygame
@@ -41,10 +41,9 @@ def main() -> None:
         elif result == "start_game":
             state = GameState()
         elif result == "menu":
+            pygame.event.clear()
             state = Menu()
             continue
-        state.draw(screen)
-        pygame.display.flip()
         clock.tick(60)
 
 

@@ -60,6 +60,9 @@ class GameState:
         self.player = Player()
         self._last_step_ms = pygame.time.get_ticks()
         speak(f"Nível {self._current_level + 1}. Boa sorte!")
+        pygame.time.wait(1000)
+        while is_speaking():
+            pygame.time.wait(30)
 
     def _stop_all_obstacle_sounds(self) -> None:
         for obs in self.obstacles:
@@ -136,7 +139,7 @@ class GameState:
                     play_oneshot("jump.ogg")
 
             elif event.key == pygame.K_c:
-                speak(f"Posição {self.player.position} de {self._map_length}.")
+                speak(f"{self.player.position} de {self._map_length}.")
 
             elif event.key == pygame.K_ESCAPE:
                 self._stop_all_obstacle_sounds()
@@ -153,13 +156,14 @@ class GameState:
 
     def _do_step(self) -> str | None:
         self.player.step()
-        if not self.player.is_jumping:
-            play_oneshot("step.ogg")
 
-        # Collision check before updating spatial audio
+        # Check collision before playing step — no step sound on death
         for obs in self.obstacles:
             if obs.check_collision(self.player):
                 return self._handle_death(obs)
+
+        if not self.player.is_jumping:
+            play_oneshot("step.ogg")
 
         self._update_obstacle_sounds()
 
@@ -180,6 +184,8 @@ class GameState:
         free_stream(death)
         speak("Você morreu! Voltando ao menu.")
         pygame.time.wait(2000)
+        while is_speaking():
+            pygame.time.wait(30)
         return "menu"
 
     def _handle_level_complete(self) -> str | None:
@@ -202,40 +208,8 @@ class GameState:
             speak(f"Nível completo! Preparando nível {self._current_level + 1}: último nível!")
         else:
             speak(f"Nível completo! Preparando nível {self._current_level + 1}.")
+        pygame.time.wait(1800)
         while is_speaking():
-            pygame.time.wait(50)
-        pygame.time.wait(600)
+            pygame.time.wait(30)
         self._load_level()
         return None
-
-    # ------------------------------------------------------------------
-    # Visual feedback (debug overlay — game is primarily audio)
-    # ------------------------------------------------------------------
-
-    def draw(self, screen: pygame.Surface) -> None:
-        screen.fill((8, 8, 24))
-
-        state_label = (
-            "Pulando"   if self.player.is_jumping  else
-            "Agachado"  if self.player.is_crouching else
-            "Correndo"
-        )
-        info = self._font.render(
-            f"Nível {self._current_level + 1}  |  "
-            f"Pos: {self.player.position}/{self._map_length}  |  "
-            f"{state_label}",
-            True, (200, 220, 255),
-        )
-        screen.blit(info, (10, 8))
-
-        obs_summary = "  ".join(
-            f"{'P' if o.type.value == 'pit' else 'B'}@{o.position}"
-            for o in self.obstacles
-        )
-        obs_surf = self._font.render(f"Obs: {obs_summary}", True, (120, 130, 140))
-        screen.blit(obs_surf, (10, 38))
-
-        speed_surf = self._font.render(
-            f"Intervalo: {self._step_interval}ms", True, (90, 110, 90)
-        )
-        screen.blit(speed_surf, (10, 68))
